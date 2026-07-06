@@ -957,7 +957,7 @@
           <span class="dot"></span>
           <span>CONTRAST</span>
         </div>
-        <div class="ocr-item bad" data-key="glare">
+        <div class="ocr-item bad" data-key="glare" style="display:none;">
           <span class="dot"></span>
           <span>GLARE / SHADOW</span>
         </div>
@@ -1820,6 +1820,10 @@
           const result = await res.json();
           document.body.style.cursor = 'default';
           
+          if (result.manual) {
+            throw new Error(result.message || "OCR service is temporarily unavailable. Please enter details manually.");
+          }
+
           if (result.error) {
             throw new Error("AI Message: " + result.message);
           }
@@ -1956,15 +1960,20 @@
             const result = await res.json();
             document.body.style.cursor = 'default';
 
+            if (result.manual) {
+              throw new Error(result.message || "OCR service is temporarily unavailable. Please enter details manually.");
+            }
+
             if (result.error) {
               throw new Error("AI Message: " + result.message);
             }
-
+            
             if (result.name) {
               const rawName   = result.name.toUpperCase().trim();
               const cleanName = filterNonNameWords(rawName);
               document.getElementById('namePassport').value = cleanName;
             }
+            
             if (result.idnum) {
               const icEl = document.getElementById('mykadPassport');
               if (icEl) {
